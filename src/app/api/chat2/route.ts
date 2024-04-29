@@ -51,7 +51,3 @@ export async function POST(req: Request) {
   // Respond with the stream
   return new StreamingTextResponse(stream);
 }
-
-export async function GET(){
-    return "hello from chat"
-}

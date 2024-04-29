@@ -22,7 +22,7 @@ export const dynamic = 'force-dynamic';
  Just return the converted terraform code and nothing else.
 
  Code: 
- 
+
  `;
  
 // convert messages from the Vercel AI SDK Format to the format
@@ -52,8 +52,4 @@ export async function POST(req: Request) {
  
   // Respond with the stream
   return new StreamingTextResponse(stream);
-}
-
-export async function GET(){
-    return "hello from chat"
 }
