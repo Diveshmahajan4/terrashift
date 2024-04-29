@@ -7,12 +7,38 @@ import { TbExchange } from 'react-icons/tb'
 import Link from 'next/link'
 import { useChat } from 'ai/react'
 import ReactMarkdown from 'react-markdown';
+import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 const AwsToGcp = () => {
 
   const { messages, input, handleInputChange, handleSubmit } = useChat();
 
   const lastMessage = messages[messages.length - 1];
+  console.log(lastMessage)
+
+  const handleDownload = () => {
+    if (lastMessage) {
+      // Create a new blob containing the content
+      const blob = new Blob([lastMessage.content], { type: 'text/plain' });
+      
+      // Create a URL for the blob
+      const url = URL.createObjectURL(blob);
+      
+      // Create a temporary anchor element
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'main.tf'; // File name
+      document.body.appendChild(a);
+      
+      // Trigger the download
+      a.click();
+      
+      // Cleanup
+      URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    }
+  }
 
   return (
     <div className=" dark:bg-gray-900">
@@ -52,10 +78,15 @@ const AwsToGcp = () => {
           <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2" htmlFor="gcp-terraform">
             GCP Terraform Code
           </label>
-          <div className='border p-2'>
+          <div className='border border-gray-300 px-2 rounded-md min-h-[70vh]'>
           {lastMessage && (
-              <ReactMarkdown className="markdown">{lastMessage.content}</ReactMarkdown>
+              <SyntaxHighlighter language="terraform" style={tomorrow}>
+                {lastMessage.content}
+              </SyntaxHighlighter>
           )}
+          </div>
+          <div className="flex justify-end mt-4">
+                <Button type='submit' onClick={handleDownload}>Download</Button>
           </div>
           
           {/* <Textarea
@@ -65,9 +96,7 @@ const AwsToGcp = () => {
             readOnly
             rows={10}
           /> */}
-          {/* <div className="flex justify-end mt-4">
-                <Button type='submit' >Generate GCP Terraform Code</Button>
-          </div> */}
+          
         </div>
       </div>
     </div>
