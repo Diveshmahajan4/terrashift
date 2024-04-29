@@ -6,11 +6,26 @@ import { Button } from './ui/button'
 import { TbExchange } from 'react-icons/tb'
 import Link from 'next/link'
 import { Editor } from '@monaco-editor/react'
+import { useCompletion } from 'ai/react'
 
 const AwsToGcp = () => {
 
   const [value, setValue] = useState<string | undefined>('');
+
+  const {
+    completion,
+    input,
+    stop,
+    isLoading,
+    handleInputChange,
+    handleSubmit,
+  } = useCompletion();
   
+
+  const handleClear = () => {
+      setValue("");
+  }
+
 
   return (
     <div className=" dark:bg-gray-900">
@@ -28,7 +43,16 @@ const AwsToGcp = () => {
               AWS Terraform Code
             </label>
             <div className='border  shadow'>
-            <Editor height="70vh" theme="vs-dark" defaultLanguage="json" defaultValue="Paste your AWS Terraform code here..." value={value} onChange={(value) => setValue(value)}/>
+            <Editor height="70vh" theme="vs-dark" defaultLanguage="json" defaultValue="Paste your AWS Terraform code here..." value={input} />
+            </div>
+            <div className="flex justify-end mt-4">
+              <Button >Submit</Button>
+            </div>
+            <div className="flex justify-end mt-4">
+              <Button onClick={handleClear}>Clear</Button>
+            </div>
+            <div className="flex justify-end mt-4">
+              <Button>Generate GCP Terraform Code</Button>
             </div>
           </div>
           <div>
@@ -38,9 +62,7 @@ const AwsToGcp = () => {
             <div className=' border rounde-md shadow'>
             <Editor height="70vh" theme="vs-dark" defaultLanguage="HCL" defaultValue="Your GCP Terraform code will be generated here..." />
             </div>
-            <div className="flex justify-end mt-4">
-              <Button>Generate GCP Terraform Code</Button>
-            </div>
+            
           </div>
         </div>
       </div>
