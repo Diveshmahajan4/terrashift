@@ -7,22 +7,20 @@ export const dynamic = 'force-dynamic';
 
  // Constructing the prompt.
  const prompt = `
- Input: Terraform code for AWS infrastructure. This can include resources like EC2 instances, S3 buckets, security groups, etc.
+ Input: Terraform code for GCP infrastructure. This can include resources like Compute Engine instances, Cloud Storage buckets, VPC networks, etc.
  
- Output: Terraform code for GCP infrastructure replicating the functionality of the AWS code.
- The script should identify the corresponding GCP resources (e.g., Compute Engine for EC2, Cloud Storage for S3) and translate the configuration accordingly.
- 
+ Output: Terraform code for AWS infrastructure replicating the functionality of the GCP code.
+ The script should identify the corresponding AWS resources (e.g., EC2 instances, S3 buckets) and translate the configuration accordingly.
+  
  Translation Rules:
- Identify the AWS resource type (e.g., aws_instance, aws_s3_bucket).
- Find the equivalent GCP resource type (e.g., google_compute_instance, google_storage_bucket).
- Map the AWS resource properties to their corresponding GCP properties.
- Handle any differences in property syntax or behavior between AWS and GCP.
+ Identify the GCP resource type (e.g., google_compute_instance, google_storage_bucket).
+ Find the equivalent AWS resource type (e.g., aws_instance, aws_s3_bucket).
+ Map the GCP resource properties to their corresponding AWS properties.
+ Handle any differences in property syntax or behavior between GCP and AWS.
  Preserve comments and variable references within the code.
-
- Just return the converted terraform code and nothing else.
-
- Code: 
-
+ 
+ Just return the converted Terraform code and nothing else.
+ 
  `;
  
 // convert messages from the Vercel AI SDK Format to the format

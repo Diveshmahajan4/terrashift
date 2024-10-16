@@ -5,26 +5,39 @@ import { Textarea } from './ui/textarea'
 import { Button } from './ui/button'
 import Link from 'next/link'
 import { TbExchange } from 'react-icons/tb'
-import { useChat, useCompletion } from 'ai/react'
-import { useSearchParams } from 'next/navigation'
-import { marked } from 'marked'
+import { useChat } from 'ai/react'
+import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 const GcpToAws = () => {
 
-  const { messages, input, handleInputChange, handleSubmit } = useChat();
-  const messagesText = messages[messages.length-1]
-  const parseMarkdownToPlainText = (markdownContent: any) => {
-    // Use marked library to parse Markdown content
-    const parsedHtml: any = marked(markdownContent);
-    // Use a temporary DOM element to convert HTML to plain text
-    const tempElement = document.createElement('div');
-    tempElement.innerHTML = parsedHtml;
-    return tempElement.textContent || tempElement.innerText || '';
-  };
+  const { messages, input, handleInputChange, handleSubmit } = useChat({ api: '/api/chat2'});
 
-  // Convert Markdown content to plain text
-  const plainTextContent = parseMarkdownToPlainText(messagesText.content);
-  
+  const lastMessage = messages[messages.length - 1];
+
+  const handleDownload = () => {
+    if (lastMessage) {
+      // Create a new blob containing the content
+      const blob = new Blob([lastMessage.content], { type: 'text/plain' });
+      
+      // Create a URL for the blob
+      const url = URL.createObjectURL(blob);
+      
+      // Create a temporary anchor element
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'main.tf'; // File name
+      document.body.appendChild(a);
+      
+      // Trigger the download
+      a.click();
+      
+      // Cleanup
+      URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    }
+  }
+
   return (
     <div className=" dark:bg-gray-900">
     <div className="bg-white dark:bg-gray-800 rounded-lg p-8 w-full max-w-screen h-screen">
@@ -54,7 +67,7 @@ const GcpToAws = () => {
                 <Button type='button'>Stop</Button>
               </div>
               <div className="flex justify-end mt-4">
-                <Button type='submit' >Generate GCP Terraform Code</Button>
+                <Button type='submit' >Generate AWS Terraform Code</Button>
               </div>
             </div>
           </form>  
@@ -63,14 +76,24 @@ const GcpToAws = () => {
           <label className="block text-gray-700 dark:text-gray-300 font-medium mb-2" htmlFor="gcp-terraform">
             AWS Terraform Code
           </label>
-          <Textarea
+          <div className='border border-gray-300 px-2 rounded-md min-h-[70vh]'>
+          {lastMessage && (
+              <SyntaxHighlighter language="terraform" style={tomorrow}>
+                {lastMessage.content}
+              </SyntaxHighlighter>
+          )}
+          </div>
+          <div className="flex justify-end mt-4">
+                <Button type='submit' onClick={handleDownload}>Download</Button>
+          </div>
+          
+          {/* <Textarea
             className="w-full h-[70vh] border border-gray-300 dark:border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-100"
             id="gcp-terraform"
             placeholder="Your AWS Terraform code will be generated here..."
             readOnly
             rows={10}
-            value={plainTextContent}
-          />
+          /> */}
           {/* <div className="flex justify-end mt-4">
                 <Button type='submit' >Generate GCP Terraform Code</Button>
           </div> */}
